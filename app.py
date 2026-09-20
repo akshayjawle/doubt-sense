@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
 import os
@@ -46,9 +46,12 @@ create_table()
 
 @app.route("/")
 def home():
-    return jsonify({
-        "message": "DoubtSense Backend is running"
-    })
+    return send_from_directory(".", "index.html")
+
+
+@app.route("/teacher")
+def teacher():
+    return send_from_directory(".", "teacher.html")
 
 
 # -----------------------------
