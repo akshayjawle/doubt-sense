@@ -1,0 +1,579 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DoubtSense</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+
+        header span {
+            color: #60a5fa;
+        }
+
+        header p {
+            color: #d1d5db;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 900px;
+            margin: 50px auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #6b7280;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .question {
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #f9fafb;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .subject {
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .priority {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .teacher-answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+        }
+
+        .teacher-answer-title {
+            color: #166534;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .waiting {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 8px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>Doubt<span>Sense</span></h1>
+
+    <p>Student Portal</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="hero">
+
+        <h2>Ask. Learn. Understand.</h2>
+
+        <p>
+            Submit your academic doubt and get help from your teacher.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Ask Your Doubt</h3>
+
+
+        <form id="questionForm">
+
+            <label>
+                Subject
+            </label>
+
+            <select id="subject" required>
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                <option value="Python">
+                    Python
+                </option>
+
+                <option value="SQL">
+                    SQL
+                </option>
+
+                <option value="Mathematics">
+                    Mathematics
+                </option>
+
+                <option value="Data Science">
+                    Data Science
+                </option>
+
+                <option value="Machine Learning">
+                    Machine Learning
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+
+            <label>
+                Your Doubt
+            </label>
+
+            <textarea
+                id="question"
+                placeholder="Type your question here..."
+                required
+            ></textarea>
+
+
+            <button type="submit">
+                Submit Doubt
+            </button>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+        </form>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>My Submitted Doubts</h3>
+
+        <div id="questionsList">
+            Loading...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+const API_URL = "http://127.0.0.1:5000";
+
+
+/* ================================
+   SUBMIT QUESTION
+================================ */
+
+document
+    .getElementById("questionForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        const subject =
+            document.getElementById("subject").value;
+
+        const question =
+            document.getElementById("question").value.trim();
+
+        const message =
+            document.getElementById("message");
+
+
+        if (!subject || !question) {
+
+            message.textContent =
+                "Please select a subject and enter your doubt.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Submitting...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API_URL + "/questions",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            subject: subject,
+                            question: question
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error || "Submission failed"
+                );
+            }
+
+
+            message.textContent =
+                "Doubt submitted successfully! Priority: " +
+                data.priority;
+
+
+            document
+                .getElementById("questionForm")
+                .reset();
+
+
+            loadQuestions();
+
+        }
+
+
+        catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                "Error: " + error.message;
+
+        }
+
+    });
+
+
+/* ================================
+   LOAD QUESTIONS
+================================ */
+
+async function loadQuestions() {
+
+    const list =
+        document.getElementById("questionsList");
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL + "/api/questions"
+            );
+
+
+        if (!response.ok) {
+            throw new Error("Could not load questions");
+        }
+
+
+        const questions =
+            await response.json();
+
+
+        if (questions.length === 0) {
+
+            list.innerHTML =
+                "<p>No doubts submitted yet.</p>";
+
+            return;
+        }
+
+
+        list.innerHTML = "";
+
+
+        questions.forEach(function(q) {
+
+
+            const div =
+                document.createElement("div");
+
+            div.className = "question";
+
+
+            const header =
+                document.createElement("div");
+
+            header.className =
+                "question-header";
+
+
+            const subject =
+                document.createElement("div");
+
+            subject.className =
+                "subject";
+
+            subject.textContent =
+                q.subject;
+
+
+            const priority =
+                document.createElement("div");
+
+            priority.className =
+                "priority priority-" +
+                (q.priority || "low");
+
+            priority.textContent =
+                q.priority || "low";
+
+
+            header.appendChild(subject);
+            header.appendChild(priority);
+
+
+            const text =
+                document.createElement("p");
+
+            text.textContent =
+                q.question;
+
+
+            div.appendChild(header);
+            div.appendChild(text);
+
+
+            /* Teacher answer */
+
+            if (q.answer) {
+
+                const answer =
+                    document.createElement("div");
+
+                answer.className =
+                    "teacher-answer";
+
+
+                const title =
+                    document.createElement("div");
+
+                title.className =
+                    "teacher-answer-title";
+
+                title.textContent =
+                    "✓ Teacher Answer";
+
+
+                const answerText =
+                    document.createElement("div");
+
+                answerText.textContent =
+                    q.answer;
+
+
+                answer.appendChild(title);
+                answer.appendChild(answerText);
+
+
+                div.appendChild(answer);
+
+            }
+
+            else {
+
+                const waiting =
+                    document.createElement("div");
+
+                waiting.className =
+                    "waiting";
+
+                waiting.textContent =
+                    "Waiting for teacher's answer...";
+
+
+                div.appendChild(waiting);
+
+            }
+
+
+            list.appendChild(div);
+
+        });
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "<p>Unable to connect to backend.</p>";
+
+    }
+
+}
+
+
+loadQuestions();
+
+
+// Refresh every 5 seconds
+
+setInterval(
+    loadQuestions,
+    5000
+);
+
+</script>
+
+
+</body>
+
+</html>
+```
+
+```
+
